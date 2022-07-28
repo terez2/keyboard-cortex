@@ -1,27 +1,28 @@
 const WebSocket = require('ws');
+const axios = require('axios');
 
-const https = require('https');
+class Service {
 
-https.get('https://localhost:3000/confirm', (resp) => {
-    console.log('confirm')
-    // let data = '';
-    //
-    // // A chunk of data has been received.
-    // resp.on('data', (chunk) => {
-    //     data += chunk;
-    // });
-    //
-    // // The whole response has been received. Print out the result.
-    // resp.on('end', () => {
-    //     console.log(JSON.parse(data).explanation);
-    // });
+    apiUrl = 'http://localhost:3000';
 
-}).on("error", (err) => {
-    console.log("Error: " + err.message);
-});
+    get(command) {
+        axios.get(`${this.apiUrl}/${command}`)
+            .then(response => {
+                console.log(response.data)
+            })
+            .catch(error => {
+                console.log(error);
+            });
+    }
 
+    confirm() {
+        this.get('confirm');
+    }
 
-
+    next() {
+        this.get('next');
+    }
+}
 
 
 /**
@@ -704,8 +705,10 @@ let user = {
     "debit":1
 }
 
-// let c = new Cortex(user, socketUrl)
+let c = new Cortex(user, socketUrl)
 let profileName = 'Tereza';
+
+const service = new Service();
 
 // ---------- sub data stream
 // have six kind of stream data ['fac', 'pow', 'eeg', 'mot', 'met', 'com']
@@ -730,5 +733,7 @@ let profileName = 'Tereza';
 
 // ----------- go to live mode after train
 // // load profile which already trained then test your mental command
-// c.live(profileName)
+c.live(profileName)
 // ---------------------------------------------------------
+
+// service.next();
