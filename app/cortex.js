@@ -660,8 +660,8 @@ class Cortex {
         })
     }
 
-    writeDataToFile(data){
-        fs.writeFile('./outputs/' + Date.now().toString() + ".json", JSON.stringify(data, null ,2), (error) => {
+    writeDataToFile(data) {
+        fs.writeFile('./outputs/' + Date.now().toString() + ".json", JSON.stringify(data, null, 2), (error) => {
             if (error) console.error(error);
         });
     }
@@ -690,8 +690,6 @@ class Cortex {
             })
             console.log('status', loadProfileResult)
 
-            var duration = 5; // in seconds; it will get commands during this elapse
-            var myTs = (Date.now()/1000)-duration; // current time in seconds
             let result = [];
 
             // // sub 'com' stream and view live mode
@@ -701,21 +699,28 @@ class Cortex {
                 console.log('\r\n')
                 console.log('--------------------stop interval--------------------');
                 console.log('\r\n')
-                // todo: 0.2?
-                let push =  result?.filter(data => data?.com?.[0] === 'push' &&  data?.com?.[1] > 0.2)?.length;
-                let neutral = result?.filter(data => data?.com?.[0] === 'neutral')?.length;
-                if (neutral >= push) {
-                    service.next();
-                    console.log('Selected command: NEXT');
-                } else {
+
+                const filterCommand = (data, command) => data?.com?.[0] === command;
+
+                let push = result?.filter(data => filterCommand(data, 'push'))?.length;
+                let neutral = result?.filter(data => filterCommand(data, 'neutral'))?.length;
+                let drop = result?.filter(data => filterCommand(data, 'drop'))?.length;
+                let max = Math.max(neutral, push, drop)
+                console.log('Number of commands selected', max);
+                if (neutral === max) {
+                    console.log('Selected command: NEUTRAL');
+                } else if (push === max) {
                     service.confirm();
                     console.log('Selected command: CONFIRM');
+                } else {
+                    service.next();
+                    console.log('Selected command: NEXT');
                 }
                 result = [];
                 console.log('\r\n')
                 console.log('--------------------start interval--------------------');
                 console.log('\r\n')
-            }, 5000);
+            }, 1500);
 
             this.socket.on('message', (data) => {
                 console.log('----------------------------------------')
