@@ -410,7 +410,6 @@ class Cortex {
 
         let accessGranted = JSON.parse(requestAccessResult)
 
-        console.log(accessGranted)
         // check if user is logged in CortexUI
         if ("error" in accessGranted) {
             console.log('You must login on CortexUI before request for grant access then rerun')
@@ -419,7 +418,6 @@ class Cortex {
             console.log(accessGranted['result']['message'])
             if (accessGranted['result']['accessGranted']) {
                 await this.querySessionInfo()
-                console.log('after querz session infor')
             } else {
                 console.log('You must accept access request from this app on CortexUI then rerun')
                 throw new Error('You must accept access request from this app on CortexUI')
