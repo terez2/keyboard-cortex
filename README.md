@@ -5,6 +5,8 @@ A Node.js application for communication with the Emotiv headset. It connects to 
 
 ## Running the app
 
+Install axios and ws library before running the application.
+
 ```bash
 # development
 $ node app.js
